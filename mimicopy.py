@@ -22,7 +22,7 @@ else:
     data = np.ravel(data)[::2]
 print(data)
 
-#（振幅）の配列を作成 (-1 から 1 に正規化)
+# 振幅の配列を作成 (-1 から 1 に正規化)
 data = data / 32768
 
 # データを分割 0.1秒ごと
@@ -30,14 +30,14 @@ data_split = np.array_split(data, int(len(data) / (rate / 10)))
 print("分割数:", len(data_split))
 
 count = 0
-ex_freqency = []    # データを格納
+ex_freqency = []    # 抽出したデータを格納するために用意
 for short_data in data_split:
-    ex_freqency.append([])
+    ex_freqency.append([])  # データを格納するために空リストを追加
     # 周波数成分
     fft_short_data = np.abs(np.fft.fft(short_data))    
     freqList = np.fft.fftfreq(short_data.shape[0], d=1.0/rate)
 
-    maxid = signal.argrelmax(fft_short_data, order=2) # 極大値
+    maxid = signal.argrelmax(fft_short_data, order=2) # 極大値を求める
     for i in maxid[0]:
         if fft_short_data[i] > 10 and 25 < freqList[i] < 4200:
             ex_freqency[count].append([freqList[i], fft_short_data[i]])
