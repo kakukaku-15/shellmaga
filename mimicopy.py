@@ -1,11 +1,11 @@
+import scipy.io.wavfile                 # WAVファイルを読み込むために使用
+from scipy import signal                # 極大値を求めるために使用
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy.io.wavfile    # WAVファイルの読み込み
-from scipy import signal    # 極大値
-import pandas as pd    # ピアノの音階辞書
+import pandas as pd                     # ピアノの音階辞書を作成するために使用
+import matplotlib.pyplot as plt         # 可視化するために使用
 import matplotlib.animation as anm
 import matplotlib.patches as pat
-import time    # 時間の表示
+import time                             # 時間の表示
 
 #音声ファイル読み込み
 wav_filename = "./sample.wav"
