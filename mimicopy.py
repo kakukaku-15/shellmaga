@@ -103,4 +103,4 @@ def update(i, fig_title, data_list, ax):
 # アニメーションを生成
 ani = anm.FuncAnimation(fig, update, fargs=("Mimicopy ", keys, ax), interval=100, frames=len(keys))
 # gifファイルとして保存
-ani.save("Sample.gif", writer="imagemagick")
+ani.save("Sample.gif", writer="pillow")
