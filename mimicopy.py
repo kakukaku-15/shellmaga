@@ -33,14 +33,14 @@ count = 0
 ex_freqency = []    # 抽出したデータを格納するために用意
 for short_data in data_split:
     ex_freqency.append([])  # データを格納するために空リストを追加
-    # 周波数成分
+    # 周波数成分と振幅を取得
     fft_short_data = np.abs(np.fft.fft(short_data))    
     freqList = np.fft.fftfreq(short_data.shape[0], d=1.0/rate)
 
     maxid = signal.argrelmax(fft_short_data, order=2) # 極大値を求める
     for i in maxid[0]:
         if fft_short_data[i] > 10 and 25 < freqList[i] < 4200:
-            ex_freqency[count].append([freqList[i], fft_short_data[i]])
+            ex_freqency[count].append(freqList[i])    # 周波数を格納
     count += 1
 
 piano_dic = pd.read_csv("./piano_dict.csv", encoding="utf-8")
@@ -52,11 +52,11 @@ print(black_keys)
 count = 0
 keys = [] # 含まれる周波数の行
 for row in ex_freqency:
-    keys.append({})
+    keys.append([])    # 各フレームの周波数を格納するために空リストを追加
     for i in row:
-        key = piano_dic.loc[abs(piano_dic.frequency - i[0]).idxmin(), "keyNumber"] - 1    # 差が最小の音階
-        if (key in keys[count]) == False or keys[count][key] < i[1]:    # かぶってないか、それより大きいか
-            keys[count][key] = i[1]
+        key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"] - 1    # 差が最小の音階
+        if (key in keys[count]) == False:    # かぶってないか
+            keys[count].append(key)
     count = count + 1
 print(keys)
 
