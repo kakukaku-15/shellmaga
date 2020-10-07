@@ -14,10 +14,10 @@
 
 - piano_dict.csv
     - ピアノの音階辞書を作成するためのCSVファイル
-- sample.wav
+- source.wav
     - 読み込む音声ファイル
     - きらきら星変奏曲 一部抜粋
-- mimicopy.py
+- main.py
     - 音声ファイルをピアノの鍵盤で可視化するプログラム
 - Sample.gif
     - sample.pyの実行により作成されるGIFファイル
