@@ -69,36 +69,35 @@ def update(i, fig_title, data_list, ax):
     ax.axis("off")    # 軸を削除
     ax.set_xlim(0, 52.1)
     ax.set_ylim(-0.5, 2.5)
-    skip = False    # 鍵盤を描画するためのフラグ
-    white_count = 0    # 白鍵をカウント
+    skip = False
+    white_count = 0
     plt.title(fig_title + time.strftime("%M:%S", time.gmtime(i / 10)))
     for j in range(0, 88):
         if skip == True:
-            skip = False
-            continue
+            skip = False    # フラグをおろす
+            continue    # 既に描画した白鍵をスキップする
         if j in black_keys:
-            # 黒鍵の後の白鍵を描画
+            # 黒鍵の右側の白鍵を描画
             color = "white"
             if j + 1 in data_list[i]:
-                color = "red"
-            rec = pat.Rectangle(xy = (white_count, 0), width = 1, height = 1.5, fc = color, ec = "black")
-            ax.add_patch(rec)
-            skip = True    # 次の白鍵を飛ばす
+                color = "red"    # 音が鳴っていれば色を赤にする
+            rec = pat.Rectangle(xy = (white_count, 0), width = 1, height = 1.5, fc = color, ec = "black")    # 長方形を作成
+            ax.add_patch(rec)    # Axesに長方形を追加
+            skip = True    # スキップフラグをたてる
+            # 白鍵の上に黒鍵を描画
             color = "gray"
             x, y = white_count - 0.3, 0.5
             w, h = 0.6, 1
         else:
+            # 白鍵を描画
             color = "white"
             x, y = white_count, 0
             w, h = 1, 1.5
-        # 音が鳴っていれば色を赤にする
         if j in data_list[i]:
-            color = "red"
-        # 長方形を描画
-        rec = pat.Rectangle(xy = (x, y), width = w, height = h, fc = color, ec = "black")
-        white_count = white_count + 1
-
-        ax.add_patch(rec)    # Axesに正方形を追加
+            color = "red"    # 音が鳴っていれば色を赤にする
+        rec = pat.Rectangle(xy = (x, y), width = w, height = h, fc = color, ec = "black")    # 長方形を作成
+        ax.add_patch(rec)    # Axesに長方形を追加
+        white_count = white_count + 1    # 白鍵の数をカウント
 
 # アニメーションを生成
 ani = anm.FuncAnimation(fig, update, fargs=("Mimicopy ", keys, ax), interval=100, frames=len(keys))
