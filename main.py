@@ -26,38 +26,48 @@ print(data)
 data = data / 32768
 
 # データを分割 0.1秒ごと
-data_split = np.array_split(data, int(len(data) / (rate / 10)))
-print("分割数:", len(data_split))
+splitted_datas = np.array_split(data, int(len(data) / (rate / 10)))
+print("分割数:", len(splitted_datas))
 
-count = 0
-ex_frequency = []    # 抽出したデータを格納するために用意
-for short_data in data_split:
-    ex_frequency.append([])  # データを格納するために空リストを追加
+ex_frequency_datas = []    # 抽出した周波数データを格納するために用意
+
+# 高速フーリエ変換を行い、閾値を設定して周波数を抽出
+def extract_fft_data(data):
+    ex_frequencies = []
     # 周波数成分と振幅を取得
     fft_short_data = np.abs(np.fft.fft(short_data))    
     freqList = np.fft.fftfreq(short_data.shape[0], d=1.0/rate)
 
-    maxid = signal.argrelmax(fft_short_data, order=2) # 極大値を求める
+    maxid = signal.argrelmax(fft_short_data, order=2)    # 極大値となっている周波数を求める
     for i in maxid[0]:
         if fft_short_data[i] > 10 and 25 < freqList[i] < 4200:
-            ex_frequency[count].append(freqList[i])    # 周波数を格納
-    count += 1
+            ex_frequencies.append(freqList[i])    # 条件を満たす周波数を格納
+    return ex_frequencies    # 抽出した周波数リストを返却
 
+# 各フレームにおいて、周波数を抽出
+for short_data in splitted_datas:
+    ex_frequency_datas.append(extract_fft_data(short_data))    # 周波数を格納
+
+# 音階辞書を生成
 piano_dic = pd.read_csv("./piano_dict.csv", encoding="utf-8")
 print(piano_dic)
 
+# 黒鍵リストを生成
 black_keys = piano_dic[piano_dic["scaleNameEn"].str.contains("#")].index
 print(black_keys)
 
-count = 0
-keys = [] # 含まれる周波数の行
-for row in ex_frequency:
-    keys.append([])    # 各フレームの周波数を格納するために空リストを追加
-    for i in row:
-        key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"] - 1    # 差が最小の音階
-        if (key in keys[count]) == False:    # かぶってないか
-            keys[count].append(key)
-    count = count + 1
+# 周波数リストから音階データを生成
+def extractFrameOfKeys(frame):
+    frameOfKeys = []    # 音階データを格納する空リストを用意
+    for i in frame:
+        key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"] - 1    # 差が最小の音階を取得
+        if (key in frameOfKeys) == False:
+            frameOfKeys.append(key)    # かぶってなかったらkeyを追加
+    return frameOfKeys    # 音階番号のリストを返却
+
+keys = []    # 鳴っている音階の鍵盤番号を格納するために宣言
+for frame in ex_frequency_datas:
+    keys.append(extractFrameOfKeys(frame))    # 各フレームの音階を追加
 print(keys)
 
 fig, ax = plt.subplots(figsize = (10, 2))
