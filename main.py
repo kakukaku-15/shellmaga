@@ -55,8 +55,8 @@ for row in ex_freqency:
     keys.append([])    # 各フレームの周波数を格納するために空リストを追加
     for i in row:
         key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"] - 1    # 差が最小の音階
-        if (key in keys[count]) == False:    # かぶってないか
-            keys[count].append(key)
+        if (key in keys[count]) == False:
+            keys[count].append(key)    # かぶってなければ音階を追加
     count = count + 1
 print(keys)
 
@@ -66,7 +66,7 @@ fig, ax = plt.subplots(figsize = (10, 2))
 def update(i, fig_title, data_list, ax):
     if i != 0:
         plt.cla()    # 現在描写されているグラフを消去
-    ax.axis("off")    # 軸を削除
+    ax.axis("off")    # 軸と目盛りを削除
     ax.set_xlim(0, 52.1)
     ax.set_ylim(-0.5, 2.5)
     skip = False
