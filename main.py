@@ -54,7 +54,7 @@ keys = [] # 含まれる周波数の行
 for row in ex_freqency:
     keys.append([])    # 各フレームの周波数を格納するために空リストを追加
     for i in row:
-        key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"] - 1    # 差が最小の音階
+        key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"]    # 差が最小の音階
         if (key in keys[count]) == False:
             keys[count].append(key)    # かぶってなければ音階を追加
     count = count + 1
