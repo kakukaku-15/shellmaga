@@ -26,12 +26,12 @@ print(data)
 data = data / 32768
 
 # データを分割 0.1秒ごと
-data_split = np.array_split(data, int(len(data) / (rate * 0.1)))
-print("分割数:", len(data_split))
+split_datas = np.array_split(data, int(len(data) / (rate * 0.1)))
+print("分割数:", len(split_datas))
 
 count = 0
 ex_freqency = []    # 抽出したデータを格納するために用意
-for short_data in data_split:
+for short_data in split_datas:
     ex_freqency.append([])  # データを格納するために空リストを追加
     # 周波数成分と振幅を取得
     fft_short_data = np.abs(np.fft.fft(short_data))    
@@ -57,7 +57,7 @@ for row in ex_freqency:
         key = piano_dic.loc[abs(piano_dic.frequency - i).idxmin(), "keyNumber"]    # 差が最小の音階
         if (key in keys[count]) == False:
             keys[count].append(key)    # かぶってなければ音階を追加
-    count = count + 1
+    count += 1
 print(keys)
 
 fig, ax = plt.subplots(figsize = (10, 2))
@@ -71,7 +71,7 @@ def update(i, fig_title, data_list, ax):
     ax.set_ylim(-0.5, 2.5)
     skip = False
     white_count = 0
-    plt.title(fig_title + time.strftime("%M:%S", time.gmtime(i / 10)))
+    plt.title(fig_title + time.strftime("%M:%S", time.gmtime(i * 0.1)))
     for j in range(0, 88):
         if skip == True:
             skip = False    # フラグをおろす
@@ -97,7 +97,7 @@ def update(i, fig_title, data_list, ax):
             color = "red"    # 音が鳴っていれば色を赤にする
         rec = pat.Rectangle(xy = (x, y), width = w, height = h, fc = color, ec = "black")    # 長方形を作成
         ax.add_patch(rec)    # Axesに長方形を追加
-        white_count = white_count + 1    # 白鍵の数をカウント
+        white_count += 1    # 白鍵の数をカウント
 
 # アニメーションを生成
 ani = anm.FuncAnimation(fig, update, fargs=("Mimicopy ", keys, ax), interval=100, frames=len(keys))
