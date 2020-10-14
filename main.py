@@ -26,7 +26,7 @@ print(data)
 data = data / 32768
 
 # データを分割 0.1秒ごと
-data_split = np.array_split(data, int(len(data) / (rate / 10)))
+data_split = np.array_split(data, int(len(data) / (rate * 0.1)))
 print("分割数:", len(data_split))
 
 count = 0
