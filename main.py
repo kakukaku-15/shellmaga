@@ -1,11 +1,11 @@
 import scipy.io.wavfile                 # WAVファイルを読み込むために使用
 from scipy import signal                # 極大値を求めるために使用
-import numpy as np
+import numpy as np                      # データの整形や高速フーリエ変換に使用
 import pandas as pd                     # ピアノの音階辞書を作成するために使用
-import matplotlib.pyplot as plt         # 可視化するために使用
-import matplotlib.animation as anm
-import matplotlib.patches as pat
-import time                             # 時間の表示
+import matplotlib.pyplot as plt         # 図の作成に使用
+import matplotlib.animation as anm      # アニメーション作成に使用
+import matplotlib.patches as pat        # 長方形を描画するために使用
+import time                             # 時間を表示するために使用
 
 #音声ファイル読み込み
 wav_filename = "./source.wav"
@@ -32,12 +32,12 @@ print("分割数:", len(split_datas))
 count = 0
 ex_freqency = []    # 抽出したデータを格納するために用意
 for short_data in split_datas:
-    ex_freqency.append([])  # データを格納するために空リストを追加
-    # 周波数成分と振幅を取得
+    ex_freqency.append([])    # データを格納するために空リストを追加
+    # フーリエ変換により周波数成分と振幅を取得
     fft_short_data = np.abs(np.fft.fft(short_data))    
     freqList = np.fft.fftfreq(short_data.shape[0], d=1.0/rate)
 
-    maxid = signal.argrelmax(fft_short_data, order=2) # 極大値を求める
+    maxid = signal.argrelmax(fft_short_data, order=2)    # 極大値を求める
     for i in maxid[0]:
         if fft_short_data[i] > 10 and 25 < freqList[i] < 4200:
             ex_freqency[count].append(freqList[i])    # 周波数を格納
